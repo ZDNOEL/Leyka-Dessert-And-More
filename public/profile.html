@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Perfil - Leyka Dessert And More</title>
+  <link rel="icon" href="img/images.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+
+<div class="profile-layout">
+  <aside class="profile-sidebar">
+    <button class="info-toggle" id="infoToggle">Detalles</button>
+
+    <div class="sidebar-header">
+      <div class="avatar-wrapper">
+        <div id="profileAvatar" class="avatar-img">&#128100;</div>
+        <label for="avatarInput" class="avatar-upload-btn" title="Subir nueva foto">&#128247;</label>
+        <input type="file" id="avatarInput" accept="image/*">
+      </div>
+
+      <h2 id="sidebarName" style="font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; margin: 0;"></h2>
+      <p id="sidebarEmailDisplay" style="opacity: 0.8; margin: 5px 0 20px;"></p>
+
+      <div id="roleBadge" class="section-kicker" style="background: rgba(255,255,255,0.2); color: white; display: inline-block;">Usuario</div>
+    </div>
+
+    <div class="user-details-collapsible" id="detailsBox">
+      <div class="detail-item">
+        <span class="detail-label">Fecha de Registro</span>
+        <span id="detailJoinDate">...</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">ID Sistema</span>
+        <span id="detailId">#...</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">WhatsApp Actual</span>
+        <span id="detailWhatsapp">No asignado</span>
+      </div>
+    </div>
+
+    <div style="margin-top: auto; padding: 30px; text-align: center;">
+      <a href="sistema_pasteles.html" class="btn btn-ghost btn-sm" style="margin-bottom: 15px; display: block; text-decoration: none;">Volver al Inicio</a>
+      <button class="btn btn-ghost btn-sm" onclick="logout()" style="width: 100%;">Cerrar Sesion</button>
+    </div>
+  </aside>
+
+  <main class="profile-content">
+    <div class="content-inner">
+      <h1 style="font-family: 'Cormorant Garamond', serif; font-size: 3rem; margin-bottom: 40px; color: #2D1A23;">Editar Perfil</h1>
+
+      <form id="unifiedProfileForm">
+        <div class="section-box">
+          <h2 class="section-title">&#128100; Datos Personales</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="profileName">Nombre Completo</label>
+              <input class="form-control" id="profileName" type="text" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="profileEmail">Correo Electronico</label>
+              <input class="form-control" id="profileEmail" type="email" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="profileWhatsapp">WhatsApp Publico</label>
+              <input class="form-control" id="profileWhatsapp" type="text" placeholder="+54 9 ...">
+            </div>
+            <div class="form-group full-width">
+              <label class="form-label" for="profileBio">Sobre Mi / Descripcion</label>
+              <textarea class="form-control" id="profileBio" rows="2" placeholder="Algo que quieras compartir..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-box">
+          <h2 class="section-title">&#128274; Cambio de Contrasena</h2>
+          <div class="password-hint">Solo completa estos campos si deseas cambiar tu contrasena actual.</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="currentPassword">Contrasena Actual</label>
+              <input class="form-control" id="currentPassword" type="password" placeholder="Tu clave actual">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="newPassword">Nueva Contrasena</label>
+              <input class="form-control" id="newPassword" type="password" placeholder="Minimo 4 caracteres">
+            </div>
+          </div>
+        </div>
+
+        <div class="global-save-footer">
+          <button class="btn-massive" type="submit" id="saveButton">GUARDAR TODOS LOS CAMBIOS</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = localStorage.getItem('token');
+  const userId = user ? (user.id || user.id_usuario) : null;
+  const MAX_AVATAR_EDGE = 768;
+  const MAX_AVATAR_BYTES = 2.5 * 1024 * 1024;
+
+  if (!user || !token) {
+    window.location.href = 'sistema_pasteles.html';
+  }
+
+  document.getElementById('sidebarName').textContent = user.nombre || 'Usuario';
+  document.getElementById('sidebarEmailDisplay').textContent = user.email || '';
+  document.getElementById('profileName').value = user.nombre || '';
+  document.getElementById('profileEmail').value = user.email || '';
+
+  let currentBase64Image = null;
+  let avatarChanged = false;
+
+  function setAvatarPreview(imageSrc) {
+    const avatar = document.getElementById('profileAvatar');
+
+    if (!imageSrc) {
+      avatar.innerHTML = '&#128100;';
+      return;
+    }
+
+    avatar.innerHTML = `<img src="${imageSrc}" style="width:100%; height:100%; border-radius:inherit; object-fit:cover;" alt="Foto de perfil">`;
+  }
+
+  function estimateDataUrlBytes(dataUrl) {
+    const base64Index = dataUrl.indexOf(',');
+    if (base64Index === -1) {
+      return dataUrl.length;
+    }
+
+    return Math.ceil((dataUrl.length - base64Index - 1) * 0.75);
+  }
+
+  async function readResponseData(response) {
+    const text = await response.text();
+    if (!text) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(text);
+    } catch (error) {
+      return { error: text };
+    }
+  }
+
+  function loadImageElement(objectUrl) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error('No se pudo abrir la imagen seleccionada.'));
+      image.src = objectUrl;
+    });
+  }
+
+  async function optimizeAvatar(file) {
+    if (!file.type || !file.type.startsWith('image/')) {
+      throw new Error('Selecciona una imagen valida.');
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+
+    try {
+      const image = await loadImageElement(objectUrl);
+      const sourceWidth = image.naturalWidth || image.width;
+      const sourceHeight = image.naturalHeight || image.height;
+      const baseScale = Math.min(1, MAX_AVATAR_EDGE / Math.max(sourceWidth, sourceHeight));
+      const attempts = [
+        { scale: baseScale, quality: 0.82 },
+        { scale: baseScale * 0.85, quality: 0.72 },
+        { scale: baseScale * 0.7, quality: 0.62 }
+      ];
+
+      for (const attempt of attempts) {
+        const scale = Math.max(0.2, attempt.scale);
+        const width = Math.max(1, Math.round(sourceWidth * scale));
+        const height = Math.max(1, Math.round(sourceHeight * scale));
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        canvas.width = width;
+        canvas.height = height;
+
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, width, height);
+        context.drawImage(image, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', attempt.quality);
+        if (estimateDataUrlBytes(dataUrl) <= MAX_AVATAR_BYTES) {
+          return dataUrl;
+        }
+      }
+
+      throw new Error('La imagen es demasiado pesada. Usa una foto mas liviana y vuelve a intentarlo.');
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
+  }
+
+  document.getElementById('infoToggle').addEventListener('click', () => {
+    const box = document.getElementById('detailsBox');
+    box.classList.toggle('is-open');
+    document.getElementById('infoToggle').textContent = box.classList.contains('is-open')
+      ? 'Ocultar detalles'
+      : 'Detalles';
+  });
+
+  async function loadProfile() {
+    try {
+      const res = await fetch(`http://localhost:3000/api/users/${userId}/profile`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await readResponseData(res);
+
+      if (!res.ok) {
+        throw new Error(data.error || 'No se pudo cargar el perfil.');
+      }
+
+      document.getElementById('sidebarName').textContent = data.nombre;
+      document.getElementById('sidebarEmailDisplay').textContent = data.email;
+      document.getElementById('detailJoinDate').textContent = new Date(data.fecha_registro).toLocaleDateString();
+      document.getElementById('detailId').textContent = '#' + data.id;
+      document.getElementById('detailWhatsapp').textContent = data.whatsapp || 'No asignado';
+
+      currentBase64Image = data.foto_perfil || null;
+      avatarChanged = false;
+      setAvatarPreview(currentBase64Image);
+
+      document.getElementById('profileName').value = data.nombre;
+      document.getElementById('profileEmail').value = data.email;
+      document.getElementById('profileBio').value = data.biografia || '';
+      document.getElementById('profileWhatsapp').value = data.whatsapp || '';
+
+      if (data.isSeller) {
+        document.getElementById('roleBadge').textContent = 'Vendedor';
+      }
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  document.getElementById('avatarInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    try {
+      currentBase64Image = await optimizeAvatar(file);
+      avatarChanged = true;
+      setAvatarPreview(currentBase64Image);
+      showToast('Imagen lista. Guarda los cambios para aplicarla.', 'success');
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      e.target.value = '';
+    }
+  });
+
+  document.getElementById('unifiedProfileForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const saveBtn = document.getElementById('saveButton');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'GUARDANDO...';
+
+    const payload = {
+      nombre: document.getElementById('profileName').value,
+      email: document.getElementById('profileEmail').value,
+      biografia: document.getElementById('profileBio').value,
+      whatsapp: document.getElementById('profileWhatsapp').value,
+      currentPassword: document.getElementById('currentPassword').value,
+      newPassword: document.getElementById('newPassword').value
+    };
+
+    if (avatarChanged) {
+      payload.foto_perfil = currentBase64Image;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:3000/api/users/${userId}/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await readResponseData(res);
+      if (!res.ok) {
+        throw new Error(data.error || 'No se pudo guardar el perfil.');
+      }
+
+      user.nombre = payload.nombre;
+      user.email = payload.email;
+      user.id = userId;
+      user.id_usuario = userId;
+      localStorage.setItem('user', JSON.stringify(user));
+
+      document.getElementById('sidebarName').textContent = payload.nombre;
+      document.getElementById('sidebarEmailDisplay').textContent = payload.email;
+
+      avatarChanged = false;
+      showToast('Perfil guardado con exito.', 'success');
+
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'GUARDAR TODOS LOS CAMBIOS';
+    }
+  });
+
+  function showToast(msg, type) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.className = 'toast is-visible ' + type;
+    setTimeout(() => toast.classList.remove('is-visible'), 3000);
+  }
+
+  function logout() {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    window.location.href = 'sistema_pasteles.html';
+  }
+
+  loadProfile();
+</script>
+</body>
+</html>

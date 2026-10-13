@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leyka - Panel de Vendedor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="header-brand">
+    <span class="brand-name">Leyka Dessert And More - Panel de Vendedor</span>
+  </div>
+  <div class="header-right">
+    <div class="header-session" id="headerSession">
+      <div class="session-copy">
+        <span class="session-label">Sesión activa</span>
+        <span class="session-name" id="sessionUserName"></span>
+      </div>
+      <button class="btn btn-ghost btn-sm" type="button" onclick="logout()">Cerrar sesión</button>
+    </div>
+  </div>
+</header>
+
+<main class="page-shell">
+  <section class="app-shell" id="appShell">
+    <section class="catalog-shell">
+      <section class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <article class="stat-card" style="background: #fff; padding: 1.5rem; border-radius: 12px; border: 1px solid #eee; text-align: center;">
+          <span class="stat-kicker" style="font-size: 0.8rem; text-transform: uppercase; color: #666;">Productos</span>
+          <strong class="stat-value" id="stat-total" style="display: block; font-size: 2rem; margin: 0.5rem 0;">0</strong>
+          <span class="stat-label" style="font-size: 0.8rem; color: #888;">Total en catálogo</span>
+        </article>
+        <article class="stat-card" style="background: #fff; padding: 1.5rem; border-radius: 12px; border: 1px solid #eee; text-align: center;">
+          <span class="stat-kicker" style="font-size: 0.8rem; text-transform: uppercase; color: #666;">Disponibles</span>
+          <strong class="stat-value" id="stat-disponibles" style="display: block; font-size: 2rem; margin: 0.5rem 0;">0</strong>
+          <span class="stat-label" style="font-size: 0.8rem; color: #888;">Listos para la venta</span>
+        </article>
+        <article class="stat-card" style="background: #fff; padding: 1.5rem; border-radius: 12px; border: 1px solid #eee; text-align: center;">
+          <span class="stat-kicker" style="font-size: 0.8rem; text-transform: uppercase; color: #666;">Precio Promedio</span>
+          <strong class="stat-value" id="stat-precio" style="display: block; font-size: 2rem; margin: 0.5rem 0;">RD$0</strong>
+          <span class="stat-label" style="font-size: 0.8rem; color: #888;">De tus productos</span>
+        </article>
+      </section>
+
+      <div class="section-header">
+
+        <div>
+          <span class="section-kicker">Gestión de Tienda</span>
+          <h2 class="section-title">Mis Productos</h2>
+          <p class="section-sub">Crea, edita y elimina productos de tu catálogo.</p>
+        </div>
+        <div class="section-actions">
+          <button class="btn btn-primary" type="button" onclick="openModal()">Nuevo producto</button>
+        </div>
+      </div>
+
+      <div class="catalog-grid dashboard-grid" id="catalogGrid"></div>
+      
+      <div class="empty-state" id="emptyState" hidden>
+        <strong>No hay productos para mostrar.</strong>
+        <p>Crea tu primer producto para empezar a vender.</p>
+      </div>
+    </section>
+  </section>
+</main>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="modal modal-product" id="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <div>
+        <span class="modal-kicker">Formulario</span>
+        <h3 class="modal-title" id="modalTitle">Nuevo producto</h3>
+      </div>
+      <button class="modal-close" type="button" onclick="closeModal()">X</button>
+    </div>
+
+    <form class="form-shell" id="productForm">
+      <input type="hidden" id="fIdProducto">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label class="form-label" for="fImagen">Imagen del producto</label>
+          <input class="form-control" type="file" id="fImagen" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="fNombre">Nombre del producto *</label>
+          <input class="form-control" id="fNombre" type="text" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="fCategoria">Categoría *</label>
+          <select class="form-control" id="fCategoria" required>
+            <option value="Pasteles">Pasteles</option>
+            <option value="Galletas">Galletas</option>
+            <option value="Postres Frios">Postres Fríos</option>
+            <option value="Bebidas">Bebidas</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="fPrecio">Precio (RD$) *</label>
+          <input class="form-control" id="fPrecio" type="number" min="0" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="fStock">Stock (unidades) *</label>
+          <input class="form-control" id="fStock" type="number" min="0" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="fEstado">Estado</label>
+          <select class="form-control" id="fEstado">
+            <option value="Disponible">Disponible</option>
+            <option value="Agotado">Agotado</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label" for="fDescripcion">Descripción</label>
+          <textarea class="form-control" id="fDescripcion"></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" type="button" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" type="submit">Guardar producto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = localStorage.getItem('token');
+
+  if (!user || !token || !user.isSeller) {
+    alert('Acceso denegado. Solo vendedores pueden acceder a este panel.');
+    window.location.href = 'sistema_pasteles.html';
+  }
+
+  document.getElementById('sessionUserName').textContent = user.sellerInfo.nombre_tienda;
+  const sellerId = user.sellerInfo.id_vendedor;
+
+  // Mapa de productos en memoria — clave: id_producto
+  // Evita meter el objeto completo (con imagen Base64) en atributos HTML
+  let productsMap = {};
+
+  async function fetchStats() {
+    try {
+      const res = await fetch(`http://localhost:3000/api/products/stats/${sellerId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      document.getElementById('stat-total').textContent = data.total;
+      document.getElementById('stat-disponibles').textContent = data.disponibles;
+      document.getElementById('stat-precio').textContent = `RD$${data.precioPromedio}`;
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+    }
+  }
+
+  async function fetchProducts() {
+    try {
+      const res = await fetch(`http://localhost:3000/api/products/seller/${sellerId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      // Guardar en mapa antes de renderizar
+      productsMap = {};
+      data.forEach(p => { productsMap[p.id_producto] = p; });
+      renderProducts(data);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+    }
+  }
+
+  function renderProducts(products) {
+    const grid = document.getElementById('catalogGrid');
+    const emptyState = document.getElementById('emptyState');
+    grid.innerHTML = '';
+
+    if (products.length === 0) {
+      emptyState.hidden = false;
+      return;
+    }
+    emptyState.hidden = true;
+
+    products.forEach(p => {
+      const card = document.createElement('article');
+      card.className = 'product-card';
+      // Solo pasamos el ID numerico en onclick — el objeto completo se busca en productsMap
+      card.innerHTML = `
+        ${p.imagen_url ? `
+        <div class="product-media">
+          <img src="${p.imagen_url}" class="product-image" alt="${p.nombre}">
+        </div>` : `
+        <div class="product-media product-media--placeholder">
+          <span class="product-media-icon">🎂</span>
+        </div>`}
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">${p.nombre}</h3>
+            <span class="card-price">RD$${p.precio}</span>
+          </div>
+          <div class="card-meta">
+            <span class="meta-tag meta-tag--cat">${p.categoria}</span>
+            <span class="meta-tag meta-tag--status ${p.estado === 'Disponible' ? 'status-ok' : 'status-warn'}">${p.estado}</span>
+            <span class="meta-tag meta-tag--stock">Stock: ${p.stock}</span>
+          </div>
+          <p class="card-desc">${p.descripcion || 'Sin descripcion'}</p>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="shareProduct(${p.id_producto})">Compartir</button>
+          <button class="btn btn-ghost btn-sm" onclick="editProduct(${p.id_producto})">Editar</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id_producto})">Eliminar</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  let currentImageBase64 = '';
+  let imageChanged = false;
+
+  document.getElementById('fImagen').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      currentImageBase64 = e.target.result;
+      imageChanged = true;
+      alert('Imagen cargada exitosamente.');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('fStock').addEventListener('input', function(e) {
+    const stock = parseInt(e.target.value) || 0;
+    const estadoSelect = document.getElementById('fEstado');
+    if (stock === 0) {
+      estadoSelect.value = 'Agotado';
+    } else if (estadoSelect.value === 'Agotado' && stock > 0) {
+      estadoSelect.value = 'Disponible';
+    }
+  });
+
+  function openModal() {
+    const overlay = document.getElementById('overlay');
+    overlay.hidden = false;
+    setTimeout(() => overlay.classList.add('is-open'), 10);
+    document.getElementById('modalTitle').textContent = 'Nuevo producto';
+    document.getElementById('productForm').reset();
+    document.getElementById('fIdProducto').value = '';
+    currentImageBase64 = '';
+    imageChanged = false;
+  }
+
+  function closeModal() {
+    const overlay = document.getElementById('overlay');
+    overlay.classList.remove('is-open');
+    setTimeout(() => overlay.hidden = true, 250);
+  }
+
+  // Recibe solo el ID — busca el objeto completo en productsMap (seguro, sin limite de tamano)
+  function editProduct(id) {
+    const p = productsMap[id];
+    if (!p) { alert('Producto no encontrado.'); return; }
+
+    openModal();
+    document.getElementById('modalTitle').textContent = 'Editar producto';
+    document.getElementById('fIdProducto').value = p.id_producto;
+    document.getElementById('fNombre').value = p.nombre;
+    document.getElementById('fCategoria').value = p.categoria;
+    document.getElementById('fPrecio').value = p.precio;
+    document.getElementById('fStock').value = p.stock;
+    document.getElementById('fEstado').value = p.estado;
+    document.getElementById('fDescripcion').value = p.descripcion || '';
+    // La imagen viene del mapa en memoria — intacta, sin truncar
+    currentImageBase64 = p.imagen_url || '';
+    imageChanged = false;
+  }
+
+  document.getElementById('productForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('fIdProducto').value;
+    const method = id ? 'PUT' : 'POST';
+    const url = id
+      ? `http://localhost:3000/api/products/${id}`
+      : `http://localhost:3000/api/products/seller/${sellerId}`;
+
+    const payload = {
+      nombre: document.getElementById('fNombre').value,
+      categoria: document.getElementById('fCategoria').value,
+      precio: parseFloat(document.getElementById('fPrecio').value),
+      stock: parseInt(document.getElementById('fStock').value),
+      estado: document.getElementById('fEstado').value,
+      descripcion: document.getElementById('fDescripcion').value,
+      imagen_url: currentImageBase64 // Se envia siempre (la nueva o la que ya estaba)
+    };
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        let errorMsg = 'Error al guardar producto';
+        try {
+          const errData = await res.json();
+          errorMsg = errData.error || errorMsg;
+        } catch (parseErr) {}
+        throw new Error(errorMsg);
+      }
+
+      closeModal();
+      fetchProducts();
+      fetchStats();
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+
+  async function deleteProduct(id) {
+    if (!confirm('¿Seguro que deseas eliminar este producto?')) return;
+    try {
+      const res = await fetch(`http://localhost:3000/api/products/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Error al eliminar producto');
+      fetchProducts();
+      fetchStats();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  // Recibe solo el ID — busca el objeto en productsMap
+  async function shareProduct(id) {
+    const p = productsMap[id];
+    if (!p) { alert('Producto no encontrado.'); return; }
+
+    const shareText = [
+      `🎂 *${p.nombre}* 🎂`,
+      `Categoría: ${p.categoria}`,
+      `Precio: RD$${p.precio}`,
+      `Estado: ${p.estado}`,
+      `Stock: ${p.stock} unidades`,
+      p.descripcion ? `Descripción: ${p.descripcion}` : '',
+      `Leyka Dessert And More`
+    ].filter(Boolean).join('\n');
+
+    const shareData = { title: p.nombre, text: shareText };
+
+    if (window.isSecureContext && typeof navigator.share === 'function') {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (error) {
+        if (error.name === 'AbortError') return;
+        console.error('Error al compartir nativo:', error);
+      }
+    }
+
+    let copied = false;
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        copied = true;
+      } catch (err) {
+        console.error('Error al copiar:', err);
+      }
+    }
+
+    const encodedText = encodeURIComponent(shareText);
+    window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
+    if (copied) {
+      alert(`¡Información de "${p.nombre}" copiada al portapapeles y lista para enviar por WhatsApp!`);
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    window.location.href = 'sistema_pasteles.html';
+  }
+
+  fetchProducts();
+  fetchStats();
+</script>
+
+</body>
+</html>

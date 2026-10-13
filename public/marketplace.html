@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leyka - Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="marketplace.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="header-brand">
+    <span class="brand-name">Leyka Dessert And More</span>
+  </div>
+  <div class="header-right marketplace-top-actions">
+    <button class="btn btn-primary btn-sm cart-trigger" id="cartButton" type="button" onclick="openCart()">
+      Carrito
+      <span class="cart-trigger-count" id="cartCountBadge">0</span>
+    </button>
+    <a href="sistema_pasteles.html" class="btn btn-ghost btn-sm" id="authLink">Iniciar sesion</a>
+    <a href="profile.html" class="btn btn-ghost btn-sm" id="profileLink" hidden style="text-decoration: none;">Mi Perfil</a>
+  </div>
+</header>
+
+<main class="page-shell">
+  <section class="app-shell">
+    <section class="catalog-shell">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">Catalogo Publico</span>
+          <h2 class="section-title">Marketplace de Postres</h2>
+          <p class="section-sub">Explora, guarda productos en tu carrito y deja tu opinion al ver cada detalle.</p>
+        </div>
+      </div>
+
+      <div class="toolbar-card">
+        <label class="control-field control-field--search" for="searchInput">
+          <span class="field-label">Buscar producto</span>
+          <input class="form-control" id="searchInput" type="text" placeholder="Nombre o descripcion del producto">
+        </label>
+
+        <label class="control-field" for="filterCat">
+          <span class="field-label">Categoria</span>
+          <select class="form-control" id="filterCat">
+            <option value="">Todas las categorias</option>
+          </select>
+        </label>
+
+        <label class="control-field" for="filterStatus">
+          <span class="field-label">Estado</span>
+          <select class="form-control" id="filterStatus">
+            <option value="">Todos los estados</option>
+            <option value="Disponible">Disponible</option>
+            <option value="Agotado">Agotado</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="catalog-grid" id="catalogGrid"></div>
+
+      <div class="empty-state" id="emptyState" hidden>
+        <strong>No hay productos disponibles en este momento.</strong>
+      </div>
+    </section>
+  </section>
+</main>
+
+<div class="overlay" id="detailOverlay" hidden>
+  <div class="modal modal-product detail-modal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="modal-header">
+      <div>
+        <span class="modal-kicker">Detalles del producto</span>
+        <h3 class="modal-title" id="detailTitle">Nombre del producto</h3>
+      </div>
+      <button class="modal-close" type="button" onclick="closeProductDetails()" aria-label="Cerrar detalles">X</button>
+    </div>
+
+    <div class="product-detail-content">
+      <div class="product-detail-media">
+        <img id="detailImage" src="" alt="" class="product-detail-image">
+      </div>
+
+      <div class="product-detail-info">
+        <div class="detail-badges">
+          <span class="product-cat" id="detailCat">Categoria</span>
+          <span class="product-state" id="detailState">Estado</span>
+        </div>
+
+        <div class="detail-rating-card">
+          <div>
+            <span class="field-label">Valoracion promedio</span>
+            <div class="detail-rating-value">
+              <span class="stars-display" id="detailRatingStars">☆☆☆☆☆</span>
+              <strong id="detailRatingValue">0.0</strong>
+            </div>
+          </div>
+          <span class="detail-rating-count" id="detailRatingCount">0 resenas</span>
+        </div>
+
+        <p class="product-desc detail-description" id="detailDesc"></p>
+
+        <div class="detail-price-block">
+          <span class="field-label">Precio</span>
+          <strong class="product-price detail-price" id="detailPrice">RD$0</strong>
+        </div>
+
+        <div class="detail-store-card">
+          <div class="detail-store-copy">
+            <span class="field-label detail-store-label">Vendido por</span>
+            <div class="detail-store-name" id="detailStore">Nombre de la tienda</div>
+          </div>
+          <a id="detailWhatsapp" href="#" target="_blank" class="btn btn-primary btn-sm detail-whatsapp-button">
+            Contactar
+          </a>
+        </div>
+
+        <div class="detail-footer-row">
+          <div class="product-stock" id="detailStock">0 uds. disponibles</div>
+          <button class="btn btn-ghost" id="detailAddToCartButton" type="button" onclick="addActiveProductToCart()">Agregar al carrito</button>
+        </div>
+      </div>
+    </div>
+
+    <section class="review-section">
+      <div class="review-section-header">
+        <div>
+          <span class="modal-kicker">Comentarios</span>
+          <h4 class="review-title">Valoracion y comentarios</h4>
+        </div>
+        <span class="review-count-pill" id="reviewCountLabel">0 resenas</span>
+      </div>
+
+      <div class="review-login-hint" id="reviewLoginHint" hidden>
+        Inicia sesion para dejar tu valoracion y comentario.
+      </div>
+
+      <form class="review-form" id="reviewForm">
+        <div class="review-stars-field">
+          <span class="field-label">Tu valoracion</span>
+          <div class="review-stars" id="reviewStars">
+            <button class="star-button" type="button" data-rating="1" aria-label="1 estrella">☆</button>
+            <button class="star-button" type="button" data-rating="2" aria-label="2 estrellas">☆</button>
+            <button class="star-button" type="button" data-rating="3" aria-label="3 estrellas">☆</button>
+            <button class="star-button" type="button" data-rating="4" aria-label="4 estrellas">☆</button>
+            <button class="star-button" type="button" data-rating="5" aria-label="5 estrellas">☆</button>
+          </div>
+        </div>
+
+        <label class="control-field" for="reviewComment">
+          <span class="field-label">Comentario</span>
+          <textarea class="form-control review-textarea" id="reviewComment" placeholder="Cuenta que te parecio este producto"></textarea>
+        </label>
+
+        <div class="review-form-actions">
+          <button class="btn btn-primary" type="submit" id="reviewSubmitButton">Publicar comentario</button>
+        </div>
+      </form>
+
+      <div class="reviews-list" id="reviewsList"></div>
+    </section>
+  </div>
+</div>
+
+<div class="overlay" id="cartOverlay" hidden>
+  <div class="modal modal-product cart-modal" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+    <div class="modal-header">
+      <div>
+        <span class="modal-kicker">Compra rapida</span>
+        <h3 class="modal-title" id="cartTitle">Tu carrito</h3>
+      </div>
+      <button class="modal-close" type="button" onclick="closeCart()" aria-label="Cerrar carrito">X</button>
+    </div>
+
+    <div class="cart-layout">
+      <div class="cart-items" id="cartItems"></div>
+
+      <aside class="cart-summary-card">
+        <div class="cart-summary-row">
+          <span>Productos</span>
+          <strong id="cartItemsCount">0</strong>
+        </div>
+        <div class="cart-summary-row">
+          <span>Total</span>
+          <strong id="cartTotal">RD$0</strong>
+        </div>
+        <p class="cart-summary-note">El carrito se guarda en este navegador para que puedas seguir agregando productos.</p>
+        <button class="btn btn-primary" type="button" id="confirmOrderButton" onclick="confirmOrder()">Confirmar pedido</button>
+        <button class="btn btn-ghost" type="button" onclick="clearCart()">Vaciar carrito</button>
+      </aside>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

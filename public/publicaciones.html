@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feed - Publicaciones</title>
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Estilos -->
+  <link rel="stylesheet" href="styles/publicaciones.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">MiFeed</div>
+    <div class="nav-links">
+      <a href="sistema_pasteles.html">Inicio</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="profile.html">Mi Perfil</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <!-- Header Area con Botón Publicar -->
+    <div class="feed-header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+      <h1 style="color: var(--ink-900); margin: 0; font-size: 1.8rem;">Feed de Publicaciones</h1>
+      <button id="open-create-modal" class="btn-primary" style="width: auto; padding: 0.6rem 1.2rem;"><i class="fas fa-plus"></i> Publicar</button>
+    </div>
+
+    <!-- Modal Crear Publicación -->
+    <div id="create-post-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" id="close-create-modal">&times;</span>
+        <div class="create-post">
+          <h2>Crear una publicación</h2>
+          <form id="create-post-form">
+            <div class="form-group">
+              <input type="text" id="post-title" placeholder="Título de la publicación" required>
+            </div>
+            <div class="form-group">
+              <textarea id="post-desc" placeholder="¿Qué estás pensando o qué quieres compartir?" required></textarea>
+            </div>
+            <div class="form-group file-upload-wrapper">
+              <label for="post-img" class="custom-file-upload">
+                <i class="fas fa-image"></i> Subir Imagen
+              </label>
+              <input type="file" id="post-img" accept="image/*">
+              <span id="file-name-display">Ningún archivo seleccionado</span>
+            </div>
+            <button type="submit" class="btn-primary">Publicar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Editar Publicación -->
+    <div id="edit-post-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" id="close-edit-modal">&times;</span>
+        <div class="create-post">
+          <h2>Editar publicación</h2>
+          <form id="edit-post-form">
+            <input type="hidden" id="edit-post-id">
+            <div class="form-group">
+              <input type="text" id="edit-post-title" placeholder="Título de la publicación" required>
+            </div>
+            <div class="form-group">
+              <textarea id="edit-post-desc" placeholder="¿Qué estás pensando o qué quieres compartir?" required></textarea>
+            </div>
+            <div class="form-group file-upload-wrapper">
+              <label for="edit-post-img" class="custom-file-upload">
+                <i class="fas fa-image"></i> Cambiar Imagen (opcional)
+              </label>
+              <input type="file" id="edit-post-img" accept="image/*">
+              <span id="edit-file-name-display">Ningún archivo seleccionado</span>
+            </div>
+            <button type="submit" class="btn-primary">Guardar Cambios</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feed de Publicaciones y Productos -->
+    <div id="feed-container">
+      <!-- Los items se cargarán con JavaScript -->
+      <div style="text-align:center; padding: 2rem;">
+        <i class="fas fa-spinner fa-spin fa-2x"></i>
+        <p>Cargando el feed...</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/publicaciones.js"></script>
+</body>
+</html>

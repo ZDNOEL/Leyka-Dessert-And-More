@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leyka Dessert And More</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="footer.css">
+<link rel="stylesheet" href="styles/sistema-pasteles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script type="module" src="sistema_pasteles.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="header-brand header-brand--centered">
+    <img src="img/images.jpg" alt="Logo" class="brand-logo">
+    <span class="brand-name">Leyka Dessert And More</span>
+  </div>
+
+  <div class="header-right">
+    <div class="header-auth" id="headerAuthGuest">
+      <button class="btn btn-ghost btn-sm" type="button" data-focus-auth="login">Iniciar sesion</button>
+      <button class="btn btn-primary btn-sm" type="button" data-focus-auth="register">Registrarse</button>
+    </div>
+
+    <div class="header-session" id="headerSession" hidden>
+      <nav class="header-nav" aria-label="Navegacion principal">
+        <a href="marketplace.html" class="btn btn-ghost btn-sm nav-link-button" id="navMarketplace">Marketplace</a>
+        <a href="publicaciones.html" class="btn btn-ghost btn-sm nav-link-button" id="navPublicaciones">Publicaciones</a>
+        <a href="profile.html" class="btn btn-ghost btn-sm nav-link-button" id="navProfile">Mi Perfil</a>
+      </nav>
+      <div class="session-copy">
+        <span class="session-label">Sesion activa</span>
+        <span class="session-name" id="sessionUserName"></span>
+      </div>
+      <button class="btn btn-ghost btn-sm" type="button" id="logoutButton">Cerrar sesion</button>
+    </div>
+  </div>
+</header>
+
+<main class="page-shell">
+  <section class="auth-shell" id="authShell">
+    <div class="auth-card">
+      <div class="auth-copy">
+        <span class="auth-kicker">Acceso al sistema</span>
+        <h1 class="auth-title">Cada bocado merece una sonrisa.</h1>
+        <p class="auth-text">Creamos postres irresistibles con pasión, creatividad y un toque especial.</p>
+
+        <div class="auth-feature-list">
+          <div class="auth-feature">
+            <strong>Dulzura real</strong>
+            <p>Postres que alegran tu dia desde el primer bocado.</p>
+          </div>
+          <div class="auth-feature">
+            <strong>Hecho con amor</strong>
+            <p>Postres hechos con dedicacion y pasion por el arte de la reposteria.</p>
+          </div>
+          <div class="auth-feature">
+            <strong>Sabor irresistible</strong>
+            <p>Postres que deleitan tu paladar con cada bocado.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-panel">
+        <div class="auth-switch auth-switch--triple" role="tablist" aria-label="Cambiar formulario">
+          <button class="auth-tab active" id="loginTab" type="button" data-auth-tab="user-login">Iniciar sesion</button>
+          <button class="auth-tab" id="registerTab" type="button" data-auth-tab="user-register">Registrarse</button>
+          <button class="auth-tab auth-tab--seller" id="sellerTab" type="button" data-auth-tab="seller">Soy vendedor</button>
+        </div>
+
+        <form class="auth-form" id="loginForm">
+          <div class="form-group full">
+            <label class="form-label" for="loginEmail">Correo electronico</label>
+            <input class="form-control" id="loginEmail" name="email" autocomplete="email" type="email" placeholder="nombre@correo.com" required>
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label" for="loginPassword">Contrasena</label>
+            <input class="form-control" id="loginPassword" name="password" autocomplete="current-password" type="password" placeholder="Escribe tu contrasena" required>
+          </div>
+
+          <div class="auth-error" id="loginError" aria-live="polite"></div>
+
+          <div class="auth-form-footer">
+            <span class="auth-helper">Si no tienes cuenta, puedes crearla ahora mismo.</span>
+            <button class="auth-link" type="button" data-auth-tab="user-register">Crear cuenta</button>
+          </div>
+
+          <button class="btn btn-primary auth-submit" type="submit">Entrar al sistema</button>
+        </form>
+
+        <form class="auth-form" id="registerForm" hidden>
+          <div class="auth-field-row">
+            <div class="form-group">
+              <label class="form-label" for="registerName">Nombre completo</label>
+              <input class="form-control" id="registerName" type="text" placeholder="Tu nombre" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="registerEmail">Correo electronico</label>
+              <input class="form-control" id="registerEmail" type="email" placeholder="nombre@correo.com" required>
+            </div>
+          </div>
+
+          <div class="auth-field-row">
+            <div class="form-group">
+              <label class="form-label" for="registerPassword">Contrasena</label>
+              <input class="form-control" id="registerPassword" type="password" placeholder="Minimo 4 caracteres" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="registerConfirmPassword">Confirmar contrasena</label>
+              <input class="form-control" id="registerConfirmPassword" type="password" placeholder="Repite la contrasena" required>
+            </div>
+          </div>
+
+          <div class="auth-error" id="registerError" aria-live="polite"></div>
+
+          <div class="auth-form-footer">
+            <span class="auth-helper">Si ya tienes acceso, vuelve al login para entrar.</span>
+            <button class="auth-link" type="button" data-auth-tab="user-login">Iniciar sesion</button>
+          </div>
+
+          <button class="btn btn-primary auth-submit" type="submit">Crear cuenta y entrar</button>
+        </form>
+
+        <div id="sellerPanel" hidden>
+          <p class="auth-helper seller-helper-copy">Registra tu tienda o entra al panel donde si se gestiona el inventario.</p>
+
+          <div class="auth-switch auth-switch--sub seller-switch" role="tablist" aria-label="Opciones de vendedor">
+            <button class="auth-tab active" id="sellerLoginTab" type="button" data-seller-tab="login">Iniciar sesion</button>
+            <button class="auth-tab" id="sellerRegisterTab" type="button" data-seller-tab="register">Registrar tienda</button>
+          </div>
+
+          <form class="auth-form" id="sellerLoginForm">
+            <div class="form-group full">
+              <label class="form-label" for="sellerLoginEmail">Correo electronico</label>
+              <input class="form-control" id="sellerLoginEmail" name="email" autocomplete="email" type="email" required>
+            </div>
+            <div class="form-group full">
+              <label class="form-label" for="sellerLoginPassword">Contrasena</label>
+              <input class="form-control" id="sellerLoginPassword" name="password" autocomplete="current-password" type="password" required>
+            </div>
+            <div class="auth-error" id="sellerLoginError" aria-live="polite"></div>
+            <button class="btn btn-primary auth-submit" type="submit">Entrar al panel</button>
+          </form>
+
+          <form class="auth-form" id="sellerRegisterForm" hidden>
+            <div class="auth-field-row">
+              <div class="form-group">
+                <label class="form-label" for="sellerRegName">Nombre del representante</label>
+                <input class="form-control" id="sellerRegName" type="text" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="sellerRegStore">Nombre de la tienda</label>
+                <input class="form-control" id="sellerRegStore" type="text" required>
+              </div>
+            </div>
+            <div class="auth-field-row">
+              <div class="form-group">
+                <label class="form-label" for="sellerRegEmail">Correo electronico</label>
+                <input class="form-control" id="sellerRegEmail" type="email" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="sellerRegPassword">Contrasena</label>
+                <input class="form-control" id="sellerRegPassword" type="password" required>
+              </div>
+            </div>
+            <div class="auth-error" id="sellerRegError" aria-live="polite"></div>
+            <button class="btn btn-primary auth-submit" type="submit">Crear tienda</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="app-shell" id="appShell" hidden>
+    <section class="market-hero">
+      <div class="hero-copy">
+        <span class="page-pill">Sesion lista</span>
+        <br>
+        <h2 class="hero-title" id="welcomeTitle">Hola</h2>
+        <p class="hero-text">Ven a Leyka: postres irresistibles para endulzar tu día.</p>
+      </div>
+
+      <div class="hero-media">
+        <div class="hero-logo-frame">
+          <video class="hero-image hero-image--brand hero-image--cover" src="video/BICOCHO-ROSADO.mp4" autoplay loop muted playsinline></video>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <span class="stat-kicker">En cada bocado</span>
+        <strong class="stat-value">Postres suaves, delicados y hechos con amor.</strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-kicker">Sabores</span>
+        <strong class="stat-value">Dulces sabores que convierten cualquier momento en algo especial.</strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-kicker">Entrega</span>
+        <strong class="stat-value">Llevamos tus postres favoritos frescos y listos para disfrutar.</strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-kicker">Emociones</span>
+        <strong class="stat-value">Más que postres, creamos momentos felices.</strong>
+      </article>
+    </section>
+
+   
+      <div class="catalog-grid">
+        <article class="product-card">
+          <div class="product-media">
+            <img class="product-image" src="img/chocolate2.jpg.jpeg" alt="Pastel de chocolate">
+            <span class="product-badge">Destacado</span>
+            <span class="product-state">Visual</span>
+          </div>
+          <div class="product-body">
+            <div class="product-meta-row">
+              <span class="product-cat">Pasteles</span>
+              <span class="product-rating">Vitrina fija</span>
+            </div>
+            <h3 class="product-name">Pastel de Chocolate</h3>
+            <p class="product-desc">Referencia de presentacion para conservar el look comercial sin cargar datos del inventario.</p>
+            <div class="product-price-row">
+              <div class="product-price-block">
+                <strong class="product-price">RD$1500</strong>
+                <span class="product-tag">Solo visual</span>
+              </div>
+              <span class="product-stock">Chocolate</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <div class="product-media">
+            <img class="product-image" src="img/cheescake.jpg" alt="Cheesecake">
+            <span class="product-badge">Nuevo look</span>
+            <span class="product-state">Visual</span>
+          </div>
+          <div class="product-body">
+            <div class="product-meta-row">
+              <span class="product-cat">Postres</span>
+              <span class="product-rating">Sin conexion</span>
+            </div>
+            <h3 class="product-name">Cheesecake</h3>
+            <p class="product-desc">Tarjeta de apoyo para mantener la presencia de catalogo, pero sin enlazarla al inventario real.</p>
+            <div class="product-price-row">
+              <div class="product-price-block">
+                <strong class="product-price">RD$220</strong>
+                <span class="product-tag">Muestra fija</span>
+              </div>
+              <span class="product-stock">Cheesecake</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <div class="product-media">
+            <img class="product-image" src="img/Brownies.png" alt="Brownies">
+            <span class="product-badge">Promo visual</span>
+            <span class="product-state">Visual</span>
+          </div>
+          <div class="product-body">
+            <div class="product-meta-row">
+              <span class="product-cat">Postres</span>
+              <span class="product-rating">Sin escritura</span>
+            </div>
+            <h3 class="product-name">Brownies artesanales</h3>
+            <p class="product-desc">La portada sigue teniendo una vitrina agradable, pero ya no ejecuta ninguna accion de producto.</p>
+            <div class="product-price-row">
+              <div class="product-price-block">
+                <strong class="product-price">RD$440</strong>
+                <span class="product-tag">Referencia visual</span>
+              </div>
+              <span class="product-stock">Brownies</span>
+            </div>
+          </div>
+        </article>
+
+                <article class="product-card">
+          <div class="product-media">
+            <img class="product-image" src="img/flan.jpg" alt="Flan">
+            <span class="product-badge">Nuevo look</span>
+            <span class="product-state">Visual</span>
+          </div>
+          <div class="product-body">
+            <div class="product-meta-row">
+              <span class="product-cat">Postres</span>
+              <span class="product-rating">Sin conexion</span>
+            </div>
+            <h3 class="product-name">Flan</h3>
+            <p class="product-desc">Tarjeta de apoyo para mantener la presencia de catalogo, pero sin enlazarla al inventario real.</p>
+            <div class="product-price-row">
+              <div class="product-price-block">
+                <strong class="product-price">RD$200</strong>
+                <span class="product-tag">Muestra fija</span>
+              </div>
+              <span class="product-stock">Flan</span>
+            </div>
+          </div>
+        </article>
+
+                <article class="product-card">
+          <div class="product-media">
+            <img class="product-image" src="img/vainilla2.jpg.jpeg" alt="Cheesecake">
+            <span class="product-badge">Nuevo look</span>
+            <span class="product-state">Visual</span>
+          </div>
+          <div class="product-body">
+            <div class="product-meta-row">
+              <span class="product-cat">Pasteles</span>
+              <span class="product-rating">Sin conexion</span>
+            </div>
+            <h3 class="product-name">Pastel de Vainilla</h3>
+            <p class="product-desc">Tarjeta de apoyo para mantener la presencia de catalogo, pero sin enlazarla al inventario real.</p>
+            <div class="product-price-row">
+              <div class="product-price-block">
+                <strong class="product-price">RD$1200</strong>
+                <span class="product-tag">Muestra fija</span>
+              </div>
+              <span class="product-stock">Vainilla</span>
+            </div>
+          </div>
+        </article>
+
+                <article class="product-card">
+          <div class="product-media">
+            <img class="product-image" src="img/Galletas.png" alt="Cheesecake">
+            <span class="product-badge">Nuevo look</span>
+            <span class="product-state">Visual</span>
+          </div>
+          <div class="product-body">
+            <div class="product-meta-row">
+              <span class="product-cat">Galletas</span>
+              <span class="product-rating">Sin conexion</span>
+            </div>
+            <h3 class="product-name">Galletas</h3>
+            <p class="product-desc">Tarjeta de apoyo para mantener la presencia de catalogo, pero sin enlazarla al inventario real.</p>
+            <div class="product-price-row">
+              <div class="product-price-block">
+                <strong class="product-price">RD$200</strong>
+                <span class="product-tag">Muestra fija</span>
+              </div>
+              <span class="product-stock">Galletas</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-left">
+      <ul class="footer-links">
+        <li><a href="#">Shop</a></li>
+        <li><a href="#">Nosotros</a></li>
+        <li><a href="#">Contacto</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-right">
+      <a href="https://www.instagram.com/leykadesserts/" class="social"><i class="fab fa-instagram"></i></a>
+      <a href="https://wa.me/+1 (809) 451-0744" class="social"><i class="fab fa-whatsapp"></i></a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

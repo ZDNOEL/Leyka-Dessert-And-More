@@ -1,0 +1,4 @@
+◇ injected env (2) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+Servidor corriendo en http://localhost:3010
+✅ Conectado a SQL Server (LeykaDB) con Autenticación de Windows
